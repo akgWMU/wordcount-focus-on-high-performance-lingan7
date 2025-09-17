@@ -169,6 +169,225 @@ SYSTEM TIME 0.23 seconds
 TOTAL TIME 7.317 seconds
 
 
+KEY DIFFERENCES:-
+
+1. Memory Management Strategy
+
+    BufferedWordCounter (Static Arrays):
+    WordFreq words[MAX_WORDS];           // Fixed 100,000 slots
+    int word_count = 0;                  // Simple counter
+    #define MAX_WORDS 100000
+
+
+    DynamicWordCounter (Dynamic Arrays):
+    typedef struct {
+        Word *array;                     // Dynamically allocated
+        int size;                        // Current elements
+        int capacity;                    // Current capacity
+    } WordArray;
+    
+    void resizeWordArray(WordArray *wa) {
+        wa->capacity *= 2;               // Doubles when full
+        wa->array = realloc(wa->array, sizeof(Word) * wa->capacity);
+    }
+        Trade-offs:
+        BufferedWordCounter: Simple, fast allocation, but wastes memory and has hard limits
+        DynamicWordCounter: Memory efficient, unlimited growth, but adds complexity and reallocation overhead
+
+2. Data Structure Design
+
+BufferedWordCounter:
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int count;
+} WordFreq;
+
+
+DynamicWordCounter:    
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int count;
+} Word;
+
+typedef struct {
+    Word *array;
+    int size;
+    int capacity;
+} WordArray;
+
+DynamicWordCounter adds an abstraction layer with WordArray, providing better encapsulation.
+
+3. File Processing Methods
+**BufferedWordCounter (Line-based with strtok):**
+char buffer[BUFFER_SIZE];
+while(fgets(buffer, sizeof(buffer), fp)) {
+    char *token = strtok(buffer, " \t\n\r");
+    while(token) {
+        clean_word(token);
+        if(strlen(token) > 0 && !is_stop_word(token))
+            insert_word(token);
+        token = strtok(NULL, " \t\n\r");
+    }
+}
+
+
+**DynamicWordCounter (Word-based with fscanf):**
+char word[MAX_WORD_LEN];
+while (fscanf(fp, "%99s", word) == 1) {
+    toLowerStr(word);
+    removePunct(word);
+    insertWord(wa, word);
+}
+Trade-offs:
+BufferedWordCounter: More robust, handles long lines, uses buffered I/O
+DynamicWordCounter: Simpler code, but less efficient for very large files and vulnerable to very long words
+
+4. String Processing Approaches
+
+BufferedWordCounter (In-place cleaning):
+
+void clean_word(char *w) {
+    int j=0;
+    for(int i=0; w[i]; i++) {
+        if(isalpha(w[i])) w[j++] = tolower(w[i]);
+    }
+    w[j] = '\0';
+}
+
+
+DynamicWordCounter (Separate functions):
+
+void toLowerStr(char *str) {
+    for (int i = 0; str[i]; i++)
+        str[i] = tolower(str[i]);
+}
+
+void removePunct(char *str) {
+    int i, j = 0;
+    for (i = 0; str[i]; i++) {
+        if (isalnum(str[i])) str[j++] = str[i];  // Note: isalnum vs isalpha
+    }
+    str[j] = '\0';
+}
+
+
+Key Difference: DynamicWordCounter uses isalnum() (allows digits) vs BufferedWordCounter’s isalpha() (letters only).
+
+5. Binary Search Implementation
+
+BufferedWordCounter:
+int binary_search(char *w, int low, int high) {
+    while(low <= high) {
+        int mid = (low + high)/2;
+        int cmp = strcmp(words[mid].word, w);
+        if(cmp == 0) return mid;
+        else if(cmp < 0) low = mid +1;
+        else high = mid -1;
+    }
+    return -1;
+}
+
+
+DynamicWordCounter:
+int binarySearch(WordArray *wa, char *word, int *insertPos) {
+    int left = 0, right = wa->size - 1;
+    while (left <= right) {
+        int mid = left + (right - left)/2;        // Overflow-safe
+        int cmp = strcmp(word, wa->array[mid].word);
+        if (cmp == 0) return mid;
+        else if (cmp < 0) right = mid - 1;
+        else left = mid + 1;
+    }
+    *insertPos = left;                           // Returns insertion position
+    return -1;
+}
+
+
+DynamicWordCounter improvements:
+
+Overflow-safe midpoint calculation
+
+Returns insertion position via pointer
+
+More descriptive variable names
+
+6. Output Format
+
+BufferedWordCounter:
+
+printf("%-15s | ", words[i].word);
+for(int j=0; j<words[i].count && j<50; j++) printf("*");
+printf(" (%d)\n", words[i].count);
+
+
+Output:
+
+word            | ***** (5)
+
+
+DynamicWordCounter:
+
+printf("%-15s | %4d | ", wa->array[i].word, wa->array[i].count);
+int stars = wa->array[i].count > 50 ? 50 : wa->array[i].count;
+for (int j = 0; j < stars; j++) printf("*");
+printf("\n");
+
+
+Output:
+
+word            |    5 | *****
+
+**Performance Comparison**
+
+**Time Complexity**
+        Both have the same:
+        Word insertion: O(log n) + O(n) shifting = O(n)
+        Final sorting: O(w log w)
+
+**Space Complexity**
+        BufferedWordCounter: O(MAX_WORDS), always allocates full array
+        DynamicWordCounter: O(w), grows as needed
+
+**Code Quality Analysis**
+        Strengths of BufferedWordCounter:
+        ✅ Robust file processing with buffered I/O
+        ✅ Simple memory management
+        ✅ Efficient for very large datasets
+
+        Strengths of DynamicWordCounter:
+        ✅ Memory efficient (grows only as needed)
+        ✅ Better encapsulation with WordArray
+        ✅ Overflow-safe binary search
+        ✅ Cleaner separation of concerns
+
+        Weaknesses of BufferedWordCounter:
+        ❌ Fixed-size, wastes memory
+        ❌ Hard word limit
+        ❌ Less modular
+        
+        Weaknesses of DynamicWordCounter:
+        ❌ fscanf less robust for big text
+        ❌ More complex memory handling
+        ❌ Reallocation overhead
+
+**Benchmark Scenarios**
+
+Small datasets (<1k words) → DynamicWordCounter wins (less memory).
+Large datasets (50k+ words) → BufferedWordCounter wins (no reallocations).
+
+Memory-constrained → DynamicWordCounter.
+High-performance needs → BufferedWordCounter.
+
+Recommendations
+
+Use BufferedWordCounter for large text files where speed matters.
+
+Use DynamicWordCounter for flexible, memory-sensitive applications.
+
+BufferedWordCounter → Performance & robustness
+
+DynamicWordCounter → Memory efficiency & flexibility
+
 
 
 

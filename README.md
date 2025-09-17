@@ -1,107 +1,395 @@
-# :wave: The Basics of GitHub 
+Word Frequency Analyzer
 
-## 🤓 Course overview and learning outcomes 
+This project contains two C programs that analyze text files in a folder, count word frequencies, filter out stopwords, and display a histogram of the most frequent words.
+Both programs avoid hash maps and instead maintain words in sorted arrays using binary search insertion.
 
-The goal of this course is to give you a brief introduction to GitHub. We’ll also provide you with materials for further learning and a few ideas to get you started on our platform. 🚀
+📌 Programs
+1. DynamicWordCounter
+    #Uses a dynamic array (malloc + realloc) for storing words.
+    #Reads files word-by-word using fscanf.
+    #Grows in memory as needed → can handle an unlimited number of unique words.
+    #Slightly slower for large files due to many I/O calls.
 
-## :octocat: Git and GitHub
+2. BufferedWordCounter
+    #Uses a static array (WordFreq words[MAX_WORDS], max = 100,000 words).
+    #Reads files using an 8KB buffer with fgets, which is faster for large files.
+    #Limited to MAX_WORDS unique words.
 
-Git is a **distributed Version Control System (VCS)**, which means it is a useful tool for easily tracking changes to your code, collaborating, and sharing. With Git you can track the changes you make to your project so you always have a record of what you’ve worked on and can easily revert back to an older version if need be. It also makes working with others easier—groups of people can work together on the same project and merge their changes into one final source!
+🚀 Features
+    #Counts word frequencies across all text files in a given folder.
+    #Filters out common stopwords (articles, pronouns, prepositions, auxiliary verbs, conjunctions).
+    #Converts all words to lowercase and strips punctuation.
+    #Prints a histogram of the top 50 most frequent words, capped at 50 stars per line.
+    #Sorting is done by frequency (descending) using qsort.
+    
+⚙️ Requirements
+    #GCC or Clang compiler
+    #macOS/Linux (uses <dirent.h> for folder traversal)
+    #Standard C libraries only: stdio.h, stdlib.h, string.h, ctype.h, dirent.h
 
-GitHub is a way to use the same power of Git all online with an easy-to-use interface. It’s used across the software world and beyond to collaborate and maintain the history of projects.
+📂 Project Structure
+    src/
+     ├── sample_texts/           # Testing input text files
+     ├── BufferedWordCounter.c   # Buffered version (static array)
+     ├── DynamicWordCounter.c    # Dynamic version (malloc/realloc)
+     ├── BWC_output              # Example output file (BufferedWordCounter)
+     ├── DWC_output              # Example output file (DynamicWordCounter)
+     ├── notes.txt               # Personal notes
+     └── README.md               # Project documentation
 
-GitHub is home to some of the most advanced technologies in the world. Whether you're visualizing data or building a new game, there's a whole community and set of tools on GitHub that can get you to the next step. This course starts with the basics of GitHub, but we'll dig into the rest later.
+🖥️ Compilation & Output
+    2 executables: **DynamicWordCounter** & **BufferedWordCounter**
+    For Compilation,
+            gcc -o DWC_output DynamicWordCounter.c
+            gcc -o BWC_output BufferedWordCounter.c
+    For Running,
+            ./DWC_output sample_texts
+            ./BWC_output sample_texts
 
-## :octocat: Understanding the GitHub flow 
+📊 Sample Output
+ Program 1:- gcc -o DWC_output DynamicWordCounter.c
+             ./DWC_output sample_texts
+             
+ --- Top 50 Words Histogram ---
+had             | 18162 | **************************************************
+not             | 17135 | **************************************************
+all             | 12496 | **************************************************
+this            | 10197 | **************************************************
+said            | 9134 | **************************************************
+one             | 8639 | **************************************************
+what            | 8417 | **************************************************
+have            | 8066 | **************************************************
+there           | 6551 | **************************************************
+now             | 6102 | **************************************************
+up              | 6048 | **************************************************
+no              | 5811 | **************************************************
+prince          | 5515 | **************************************************
+are             | 5505 | **************************************************
+would           | 5283 | **************************************************
+pierre          | 5224 | **************************************************
+out             | 5127 | **************************************************
+did             | 5114 | **************************************************
+only            | 4919 | **************************************************
+more            | 4601 | **************************************************
+then            | 4575 | **************************************************
+into            | 4486 | **************************************************
+man             | 4411 | **************************************************
+some            | 4308 | **************************************************
+will            | 4242 | **************************************************
+do              | 3940 | **************************************************
+could           | 3920 | **************************************************
+about           | 3863 | **************************************************
+like            | 3835 | **************************************************
+time            | 3675 | **************************************************
+old             | 3673 | **************************************************
+how             | 3598 | **************************************************
+himself         | 3578 | **************************************************
+very            | 3263 | **************************************************
+natsha          | 3250 | **************************************************
+down            | 3098 | **************************************************
+andrew          | 3069 | **************************************************
+over            | 2953 | **************************************************
+men             | 2932 | **************************************************
+has             | 2914 | **************************************************
+these           | 2907 | **************************************************
+see             | 2907 | **************************************************
+other           | 2903 | **************************************************
+know            | 2894 | **************************************************
+face            | 2890 | **************************************************
+eyes            | 2879 | **************************************************
+still           | 2872 | **************************************************
+those           | 2835 | **************************************************
+went            | 2819 | **************************************************
+such            | 2812 | **************************************************
+**./DWC_output sample_texts  5.58s user 0.22s system 65% cpu 8.810 total**
 
-The GitHub flow is a lightweight workflow that allows you to experiment and collaborate on your projects easily, without the risk of losing your previous work.
+USER TIME 5.58 seconds
+SYSTEM TIME 0.22 seconds
+TOTAL TIME 8.810 seconds
 
-### Repositories
+Now, For checking with Buffer concept
 
-A repository is where your project work happens--think of it as your project folder. It contains all of your project’s files and revision history.  You can work within a repository alone or invite others to collaborate with you on those files.
+Program 2:- 
 
-### Cloning 
+--- Top 50 Words Histogram ---
+had             | 18162 | **************************************************
+not             | 17135 | **************************************************
+all             | 12496 | **************************************************
+this            | 10197 | **************************************************
+said            | 9134 | **************************************************
+one             | 8639 | **************************************************
+what            | 8417 | **************************************************
+have            | 8066 | **************************************************
+there           | 6551 | **************************************************
+now             | 6102 | **************************************************
+up              | 6048 | **************************************************
+no              | 5811 | **************************************************
+prince          | 5515 | **************************************************
+are             | 5505 | **************************************************
+would           | 5283 | **************************************************
+pierre          | 5224 | **************************************************
+out             | 5127 | **************************************************
+did             | 5114 | **************************************************
+only            | 4919 | **************************************************
+more            | 4601 | **************************************************
+then            | 4575 | **************************************************
+into            | 4486 | **************************************************
+man             | 4411 | **************************************************
+some            | 4308 | **************************************************
+will            | 4242 | **************************************************
+do              | 3940 | **************************************************
+could           | 3920 | **************************************************
+about           | 3863 | **************************************************
+like            | 3835 | **************************************************
+time            | 3675 | **************************************************
+old             | 3673 | **************************************************
+how             | 3598 | **************************************************
+himself         | 3578 | **************************************************
+very            | 3263 | **************************************************
+natsha          | 3250 | **************************************************
+down            | 3098 | **************************************************
+andrew          | 3069 | **************************************************
+over            | 2953 | **************************************************
+men             | 2932 | **************************************************
+has             | 2914 | **************************************************
+these           | 2907 | **************************************************
+see             | 2907 | **************************************************
+other           | 2903 | **************************************************
+know            | 2894 | **************************************************
+face            | 2890 | **************************************************
+eyes            | 2879 | **************************************************
+still           | 2872 | **************************************************
+those           | 2835 | **************************************************
+went            | 2819 | **************************************************
+such            | 2812 | **************************************************
+**./DWC_output sample_texts  5.86s user 0.23s system 83% cpu 7.317 total**
 
-When a repository is created with GitHub, it’s stored remotely in the ☁️. You can clone a repository to create a local copy on your computer and then use Git to sync the two. This makes it easier to fix issues, add or remove files, and push larger commits. You can also use the editing tool of your choice as opposed to the GitHub UI. Cloning a repository also pulls down all the repository data that GitHub has at that point in time, including all versions of every file and folder for the project! This can be helpful if you experiment with your project and then realize you liked a previous version more. 
-To learn more about cloning, read ["Cloning a Repository"](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository). 
-
-### Committing and pushing
-**Committing** and **pushing** are how you can add the changes you made on your local machine to the remote repository in GitHub. That way your instructor and/or teammates can see your latest work when you’re ready to share it. You can make a commit when you have made changes to your project that you want to “checkpoint.” You can also add a helpful **commit message** to remind yourself or your teammates what work you did (e.g. “Added a README with information about our project”).
-
-Once you have a commit or multiple commits that you’re ready to add to your repository, you can use the push command to add those changes to your remote repository. Committing and pushing may feel new at first, but we promise you’ll get used to it 🙂
-
-## 💻 GitHub terms to know 
-
-### Repositories 
-We mentioned repositories already, they are where your project work happens, but let’s talk a bit more about the details of them! As you work more on GitHub you will have many repositories which may feel confusing at first. Fortunately, your ["GitHub dashboard"](https://docs.github.com/en/github/setting-up-and-managing-your-github-user-account/about-your-personal-dashboard) helps to easily navigate to your repositories and see useful information about them. Make sure you’re logged in to see it!
-
-Repositories also contain **README**s. You can add a README file to your repository to tell other people why your project is useful, what they can do with your project, and how they can use it. We are using this README to communicate how to learn Git and GitHub with you. 😄 
-To learn more about repositories read ["Creating, Cloning, and Archiving Repositories](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-repositories) and ["About README's"](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-readmes). 
-
-### Branches
-You can use branches on GitHub to isolate work that you do not want merged into your final project just yet. Branches allow you to develop features, fix bugs, or safely experiment with new ideas in a contained area of your repository. Typically, you might create a new branch from the default branch of your repository—main. This makes a new working copy of your repository for you to experiment with. Once your new changes have been reviewed by a teammate, or you are satisfied with them, you can merge your changes into the default branch of your repository.
-To learn more about branching, read ["About Branches"](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-branches).
-
-### Forks
-A fork is another way to copy a repository, but is usually used when you want to contribute to someone else’s project. Forking a repository allows you to freely experiment with changes without affecting the original project and is very popular when contributing to open source software projects!
-To learn more about forking, read ["Fork a repo"](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo)
-
-### Pull requests
-When working with branches, you can use a pull request to tell others about the changes you want to make and ask for their feedback. Once a pull request is opened, you can discuss and review the potential changes with collaborators and add more changes if need be. You can add specific people as reviewers of your pull request which shows you want their feedback on your changes! Once a pull request is ready-to-go, it can be merged into your main branch.
-To learn more about pull requests, read ["About Pull Requests"](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests). 
+USER TIME 5.86 seconds
+SYSTEM TIME 0.23 seconds
+TOTAL TIME 7.317 seconds
 
 
-### Issues
-Issues are a way to track enhancements, tasks, or bugs for your work on GitHub. Issues are a great way to keep track of all the tasks you want to work on for your project and let others know what you plan to work on. You can also use issues to tell a favorite open source project about a bug you found or a feature you think would be great to add!
+KEY DIFFERENCES:-
 
-For larger projects, you can keep track of many issues on a project board. GitHub Projects help you organize and prioritize your work and you can read more about them [in this "About Project boards document](https://docs.github.com/en/github/managing-your-work-on-github/about-project-boards). You likely won’t need a project board for your assignments, but once you move on to even bigger projects, they’re a great way to organize your team’s work!
-You can also link together pull requests and issues to show that a fix is in progress and to automatically close the issue when someone merges the pull request.
-To learn more about issues and linking them to your pull requests, read ["About Issues"](https://docs.github.com/en/github/managing-your-work-on-github/about-issues). 
+1. Memory Management Strategy
 
-### Your user profile
+    BufferedWordCounter (Static Arrays):
+    WordFreq words[MAX_WORDS];           // Fixed 100,000 slots
+    int word_count = 0;                  // Simple counter
+    #define MAX_WORDS 100000
 
-Your profile page tells people the story of your work through the repositories you're interested in, the contributions you've made, and the conversations you've had. You can also give the world a unique view into who you are with your profile README. You can use your profile to let future employers know all about you! 
-To learn more about your user profile and adding and updating your profile README, read ["Managing Your Profile README"](https://docs.github.com/en/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme). 
 
-### Using markdown on GitHub 
+    DynamicWordCounter (Dynamic Arrays):
+    typedef struct {
+        Word *array;                     // Dynamically allocated
+        int size;                        // Current elements
+        int capacity;                    // Current capacity
+    } WordArray;
+    
+    void resizeWordArray(WordArray *wa) {
+        wa->capacity *= 2;               // Doubles when full
+        wa->array = realloc(wa->array, sizeof(Word) * wa->capacity);
+    }
+        Trade-offs:
+        BufferedWordCounter: Simple, fast allocation, but wastes memory and has hard limits
+        DynamicWordCounter: Memory efficient, unlimited growth, but adds complexity and reallocation overhead
 
-You might have noticed already, but you can add some fun styling to your issues, pull requests, and files. ["Markdown"](https://guides.github.com/features/mastering-markdown/) is an easy way to style your issues, pull requests, and files with some simple syntax. This can be helpful to organize your information and make it easier for others to read. You can also drop in gifs and images to help convey your point!
-To learn more about using GitHub’s flavor of markdown, read ["Basic Writing and Formatting Syntax"](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax). 
+2. Data Structure Design
 
-### Engaging with the GitHub community
+BufferedWordCounter:
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int count;
+} WordFreq;
 
-The GitHub community is vast. There are many types of people who use GitHub in their day to day—students like you, professional developers, hobbyists working on open source projects, and explorers who are just jumping into the world of software development on their own. There are many ways you can interact with the larger GitHub community, but here are three places where you can start. 
 
-#### Starring repositories 
+DynamicWordCounter:    
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int count;
+} Word;
 
-If you find a repository interesting or you want to keep track of it, star it! When you star a repository it’s also used as a signal to surface better recommendations on github.com/explore. If you’d like to get back to your starred repositories you can do so via your user profile. 
-To learn  more about starring repositories, read ["Saving Repositories with Stars"](https://docs.github.com/en/github/getting-started-with-github/saving-repositories-with-stars). 
+typedef struct {
+    Word *array;
+    int size;
+    int capacity;
+} WordArray;
 
-#### Following users 
+DynamicWordCounter adds an abstraction layer with WordArray, providing better encapsulation.
 
-You can follow people on GitHub to receive notifications about their activity and discover projects in their communities. When you follow a user, their public GitHub activity will show up on your dashboard so you can see all the cool things they are working on. 
-To learn more about following users, read ["Following People"](https://docs.github.com/en/github/getting-started-with-github/following-people).
+3. File Processing Methods
+**BufferedWordCounter (Line-based with strtok):**
+char buffer[BUFFER_SIZE];
+while(fgets(buffer, sizeof(buffer), fp)) {
+    char *token = strtok(buffer, " \t\n\r");
+    while(token) {
+        clean_word(token);
+        if(strlen(token) > 0 && !is_stop_word(token))
+            insert_word(token);
+        token = strtok(NULL, " \t\n\r");
+    }
+}
 
-#### Browsing GitHub Explore 
 
-GitHub Explore is a great place to do just that … explore :smile: You can find new projects, events, and developers to interact with.
+**DynamicWordCounter (Word-based with fscanf):**
+char word[MAX_WORD_LEN];
+while (fscanf(fp, "%99s", word) == 1) {
+    toLowerStr(word);
+    removePunct(word);
+    insertWord(wa, word);
+}
+Trade-offs:
+BufferedWordCounter: More robust, handles long lines, uses buffered I/O
+DynamicWordCounter: Simpler code, but less efficient for very large files and vulnerable to very long words
 
-You can check out the GitHub Explore website [at github.com/explore](https://github.com/explore). The more you interact with GitHub the more tailored your Explore view will be. 
+4. String Processing Approaches
 
-## 📝 Optional next steps 
+BufferedWordCounter (In-place cleaning):
 
-* Open a pull request and let your teacher know that you’ve finished this course.  
-* Create a new markdown file in this repository. Let them know what you learned and what you are still confused about! Experiment with different styles!
-* Create your profile README. Let the world know a little bit more about you! What are you interested in learning? What are you working on? What's your favorite hobby? Learn more about creating your profile README in the document, ["Managing Your Profile README"](https://docs.github.com/en/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme).
-* Go to your user dashboard and create a new repository. Experiment with the features within that repository to familiarize yourself with them. 
-* [Let us know what you liked or didn’t like about the content of this course](https://support.github.com/contact/education). What would you like to see more of? What would be interesting or helpful to your learning journey? 
+void clean_word(char *w) {
+    int j=0;
+    for(int i=0; w[i]; i++) {
+        if(isalpha(w[i])) w[j++] = tolower(w[i]);
+    }
+    w[j] = '\0';
+}
 
-## 📚  Resources 
-* [A short video explaining what GitHub is](https://www.youtube.com/watch?v=w3jLJU7DT5E&feature=youtu.be) 
-* [Git and GitHub learning resources](https://docs.github.com/en/github/getting-started-with-github/git-and-github-learning-resources) 
-* [Understanding the GitHub flow](https://guides.github.com/introduction/flow/)
-* [How to use GitHub branches](https://www.youtube.com/watch?v=H5GJfcp3p4Q&feature=youtu.be)
-* [Interactive Git training materials](https://githubtraining.github.io/training-manual/#/01_getting_ready_for_class)
-* [GitHub's Learning Lab](https://lab.github.com/)
-* [Education community forum](https://education.github.community/)
-* [GitHub community forum](https://github.community/)
+
+DynamicWordCounter (Separate functions):
+
+void toLowerStr(char *str) {
+    for (int i = 0; str[i]; i++)
+        str[i] = tolower(str[i]);
+}
+
+void removePunct(char *str) {
+    int i, j = 0;
+    for (i = 0; str[i]; i++) {
+        if (isalnum(str[i])) str[j++] = str[i];  // Note: isalnum vs isalpha
+    }
+    str[j] = '\0';
+}
+
+
+Key Difference: DynamicWordCounter uses isalnum() (allows digits) vs BufferedWordCounter’s isalpha() (letters only).
+
+5. Binary Search Implementation
+
+BufferedWordCounter:
+int binary_search(char *w, int low, int high) {
+    while(low <= high) {
+        int mid = (low + high)/2;
+        int cmp = strcmp(words[mid].word, w);
+        if(cmp == 0) return mid;
+        else if(cmp < 0) low = mid +1;
+        else high = mid -1;
+    }
+    return -1;
+}
+
+
+DynamicWordCounter:
+int binarySearch(WordArray *wa, char *word, int *insertPos) {
+    int left = 0, right = wa->size - 1;
+    while (left <= right) {
+        int mid = left + (right - left)/2;        // Overflow-safe
+        int cmp = strcmp(word, wa->array[mid].word);
+        if (cmp == 0) return mid;
+        else if (cmp < 0) right = mid - 1;
+        else left = mid + 1;
+    }
+    *insertPos = left;                           // Returns insertion position
+    return -1;
+}
+
+
+DynamicWordCounter improvements:
+
+Overflow-safe midpoint calculation
+
+Returns insertion position via pointer
+
+More descriptive variable names
+
+6. Output Format
+
+BufferedWordCounter:
+
+printf("%-15s | ", words[i].word);
+for(int j=0; j<words[i].count && j<50; j++) printf("*");
+printf(" (%d)\n", words[i].count);
+
+
+Output:
+
+word            | ***** (5)
+
+
+DynamicWordCounter:
+
+printf("%-15s | %4d | ", wa->array[i].word, wa->array[i].count);
+int stars = wa->array[i].count > 50 ? 50 : wa->array[i].count;
+for (int j = 0; j < stars; j++) printf("*");
+printf("\n");
+
+
+Output:
+
+word            |    5 | *****
+
+**Performance Comparison**
+
+**Time Complexity**
+        Both have the same:
+        Word insertion: O(log n) + O(n) shifting = O(n)
+        Final sorting: O(w log w)
+
+**Space Complexity**
+        BufferedWordCounter: O(MAX_WORDS), always allocates full array
+        DynamicWordCounter: O(w), grows as needed
+
+**Code Quality Analysis**
+        Strengths of BufferedWordCounter:
+        ✅ Robust file processing with buffered I/O
+        ✅ Simple memory management
+        ✅ Efficient for very large datasets
+
+        Strengths of DynamicWordCounter:
+        ✅ Memory efficient (grows only as needed)
+        ✅ Better encapsulation with WordArray
+        ✅ Overflow-safe binary search
+        ✅ Cleaner separation of concerns
+
+        Weaknesses of BufferedWordCounter:
+        ❌ Fixed-size, wastes memory
+        ❌ Hard word limit
+        ❌ Less modular
+        
+        Weaknesses of DynamicWordCounter:
+        ❌ fscanf less robust for big text
+        ❌ More complex memory handling
+        ❌ Reallocation overhead
+
+**Benchmark Scenarios**
+
+Small datasets (<1k words) → DynamicWordCounter wins (less memory).
+Large datasets (50k+ words) → BufferedWordCounter wins (no reallocations).
+
+Memory-constrained → DynamicWordCounter.
+High-performance needs → BufferedWordCounter.
+
+Recommendations
+
+Use BufferedWordCounter for large text files where speed matters.
+
+Use DynamicWordCounter for flexible, memory-sensitive applications.
+
+BufferedWordCounter → Performance & robustness
+
+DynamicWordCounter → Memory efficiency & flexibility
+
+
+
+
+
+    
